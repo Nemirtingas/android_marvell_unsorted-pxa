@@ -15,7 +15,6 @@
 
 #include "gc_egl_precomp.h"
 #if defined(ANDROID)
-// #include <ui/android_native_buffer.h>
 #include "gc_gralloc_priv.h"
 #endif
 

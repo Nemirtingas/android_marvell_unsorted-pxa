@@ -23,8 +23,6 @@
 #include <pixelflinger/format.h>
 #include <pixelflinger/pixelflinger.h>
 
-// #include <private/ui/android_natives_priv.h>
-
 #include "gc_gralloc_priv.h"
 #endif
 

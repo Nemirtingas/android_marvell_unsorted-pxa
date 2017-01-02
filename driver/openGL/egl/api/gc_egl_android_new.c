@@ -26,8 +26,6 @@
 
 #include <pixelflinger/format.h>
 
-//#include <ui/android_native_buffer.h>
-//#include <ui/egl/android_natives.h>
 #include <ui/ANativeObjectBase.h>
 #include "gc_gralloc_priv.h"
 
