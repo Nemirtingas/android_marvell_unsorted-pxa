@@ -104,7 +104,7 @@ AQROOT    := $(call my-dir)
 AQARCH    := $(AQROOT)/arch/$(GPU_TYPE)
 
 ARCH_TYPE := $(TARGET_ARCH)
-TAG       := VIVANTE
+TAG       := MRVL 
 
 export KERNEL_DIR
 export CROSS_COMPILE
