@@ -27,6 +27,12 @@
 extern "C" {
 #endif
 
+/* Pixel Formats */
+enum {
+	HAL_PIXEL_FORMAT_RGBA_5551          = 6,
+	HAL_PIXEL_FORMAT_RGBA_4444          = 7,
+};
+
 NativeDisplayType
 veglGetDefaultDisplay(
 	void

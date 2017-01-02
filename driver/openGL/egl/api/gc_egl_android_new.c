@@ -26,12 +26,14 @@
 
 #include <pixelflinger/format.h>
 
-#include <ui/android_native_buffer.h>
-#include <ui/egl/android_natives.h>
+//#include <ui/android_native_buffer.h>
+//#include <ui/egl/android_natives.h>
+#include <ui/ANativeObjectBase.h>
 #include "gc_gralloc_priv.h"
+
 #include <errno.h>
 
-#define ENTERFCN() LOGV("%s\n",  __FUNCTION__ )
+#define ENTERFCN() ALOGV("%s\n",  __FUNCTION__ )
 
 #define ANDROID_DUMMY (31415926)
 
@@ -149,7 +151,7 @@ veglGetWindowInfo(
     Window->query(Window, NATIVE_WINDOW_HEIGHT, &height);
     Window->query(Window, NATIVE_WINDOW_FORMAT, &format);
 
-    LOGV("Window width = %d, height = %d format =%d", width, height, format);
+    ALOGV("Window width = %d, height = %d format =%d", width, height, format);
 
     gcmONERROR(_ConvertFormat(format, BitsPerPixel, Format));
 
@@ -163,7 +165,7 @@ veglGetWindowInfo(
     return gcvTRUE;
 
 OnError:
-    LOGE("Unsupported format requested");
+    ALOGE("Unsupported format requested");
     * X            = 0;
     * Y            = 0;
     * Width        = 0;
@@ -204,7 +206,7 @@ veglGetWindowBits(
     /* We are assuming Stride parameter is prepopulated with Bpp */
     *Stride   = buffer->stride * bitsPerPixel / 8;
 
-    LOGV("phys : %p, logi : %p, stride : %d, usage : 0x%08X", (void *)*Physical, *Logical, *Stride, buffer->usage);
+    ALOGV("phys : %p, logi : %p, stride : %d, usage : 0x%08X", (void *)*Physical, *Logical, *Stride, buffer->usage);
 
     return gcvTRUE;
 }
@@ -293,7 +295,7 @@ veglGetPixmapInfo(
 
     if (Pixmap->version != gcmSIZEOF(egl_native_pixmap_t))
     {
-        LOGE("This is not an Android pixmap");
+        ALOGE("This is not an Android pixmap");
         goto OnError;
     }
 
@@ -335,7 +337,7 @@ veglGetPixmapBits(
 
     if (Pixmap->version != gcmSIZEOF(egl_native_pixmap_t))
     {
-        LOGE("This is not an Android pixmap");
+        ALOGE("This is not an Android pixmap");
         goto OnError;
     }
 
@@ -440,7 +442,7 @@ veglGetDisplayBackBuffer(
     /* Dequeue a buffer from native window. */
     for (tryCount = 0; tryCount  < 200; tryCount++)
     {
-        rel = Window->dequeueBuffer(Window, &buffer);
+        rel = Window->dequeueBuffer(Window, &buffer, -1);
 
         if (rel != -EBUSY)
         {
@@ -453,26 +455,10 @@ veglGetDisplayBackBuffer(
     if (rel != 0)
     {
         gcsHAL_INTERFACE iface;
-        LOGE("Failed to dequeue buffer: errno=%d", rel);
+        ALOGE("Failed to dequeue buffer: errno=%d", rel);
 
         iface.command = gcvHAL_RESET;
         gcoHAL_Call(gcvNULL, &iface);
-
-        return gcvFALSE;
-    }
-
-    /* Lock buffer before rendering. */
-    if (Window->lockBuffer(Window, buffer))
-    {
-        LOGE("Failed to lock the window buffer");
-
-#if ANDROID_SDK_VERSION >= 9
-        /* Cancel this buffer. */
-        Window->cancelBuffer(Window, buffer);
-#else
-        /* Queue back. */
-        Window->queueBuffer(Window, buffer);
-#endif
 
         return gcvFALSE;
     }
@@ -490,7 +476,7 @@ veglGetDisplayBackBuffer(
                                     GRALLOC_USAGE_SW_WRITE_RARELY */,
                             0, 0, buffer->width, buffer->height, &vaddr))
     {
-        LOGE("gralloc failed to lock the buffer");
+        ALOGE("gralloc failed to lock the buffer");
         return gcvFALSE;
     }
 
@@ -508,7 +494,7 @@ veglGetDisplayBackBuffer(
 
     *Flip = gcvTRUE;
 
-    LOGV("Buffer handle: %p", buffer);
+    ALOGV("Buffer handle: %p", buffer);
     return gcvTRUE;
 }
 
@@ -528,12 +514,12 @@ veglSetDisplayFlip(
 
     if (gralloc_module->unlock(gralloc_module, buffer->handle))
     {
-        LOGE("gralloc failed to unlock the buffer");
+        ALOGE("gralloc failed to unlock the buffer");
         return gcvFALSE;
     }
 
     /* Queue native buffer back into native window. Triggers composition. */
-    Window->queueBuffer(Window, buffer);
+    Window->queueBuffer(Window, buffer, -1);
 
     /* Decrease reference of native buffer.*/
     buffer->common.decRef(&buffer->common);
