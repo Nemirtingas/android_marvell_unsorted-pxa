@@ -14,6 +14,8 @@
 LOCAL_PATH := $(call my-dir)
 include $(LOCAL_PATH)/../../../Android.mk.def
 
+TAG := MRVL
+
 #
 # libEGL_$(TAG)
 #
@@ -84,6 +86,7 @@ endif
 
 LOCAL_MODULE         := libEGL_$(TAG)
 LOCAL_MODULE_TAGS    := optional
+LOCAL_MODULE_PATH    := $(TARGET_OUT_SHARED_LIBRARIES)
 LOCAL_PRELINK_MODULE := false
 include $(BUILD_SHARED_LIBRARY)
 
