@@ -51,6 +51,10 @@ void gpu_csc_ARGBToNV12(const unsigned char* pSrc, GCUint srcStride,
                         unsigned char* pDst[2], GCUint dstStride[2],
                         GCUint width, GCUint height);
 
+void gpu_csc_ABGRToNV12(const unsigned char* pSrc, GCUint srcStride,
+                        unsigned char* pDst[2], GCUint dstStride[2],
+                        GCUint width, GCUint height);
+
 void gpu_csc_RGBToNV12(const unsigned char* pSrc, GCUint srcStride,
                        unsigned char* pDst[2], GCUint dstStride[2],
                        GCUint width, GCUint height);
